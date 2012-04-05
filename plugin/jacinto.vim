@@ -79,6 +79,7 @@ function! s:Format()
     execute "normal ggD"
     execute "normal 0i{"
     execute orig_line
+    execute '%s/\s\+$//g'
     execute "normal " . orig_col . "|"
     set nopaste
     call s:Echo("jacinto ==> Formatted valid JSON", 1)
