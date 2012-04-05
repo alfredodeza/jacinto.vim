@@ -69,6 +69,7 @@ function! s:Format()
     if g:jacinto_has_errors
         return
     endif
+    set paste
     " FIXME wat
     execute 1
     execute "normal VG"
@@ -79,6 +80,7 @@ function! s:Format()
     execute "normal 0i{"
     execute orig_line
     execute "normal " . orig_col . "|"
+    set nopaste
     call s:Echo("jacinto ==> Formatted valid JSON", 1)
 endfunction
 
