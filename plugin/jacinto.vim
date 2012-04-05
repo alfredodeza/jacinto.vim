@@ -9,6 +9,7 @@ if exists("g:loaded_jacinto") || &cp
   finish
 endif
 
+let g:jacinto_has_errors = 0
 
 function! s:Echo(msg, ...)
     redraw!
@@ -25,6 +26,7 @@ endfun
 
 
 function! s:Validate()
+    let g:jacinto_has_errors = 0
     let _file = expand('%:p')
     let cmd = "python -m json.tool " . _file
     let out = system(cmd)
@@ -32,16 +34,16 @@ function! s:Validate()
     for w in split(out, '\n')
         if w =~ '\v^No\s+JSON\s+object'
             call s:Echo("Formatter could not find any JSON object")
-            return
+            return s:GoToError(w)
         elseif w =~ '\v^Expecting\s+'
             call s:Echo(w)
-            return
+            return s:GoToError(w)
         elseif w =~ '\v^Invalid\s+'
             call s:Echo(w)
-            return
+            return s:GoToError(w)
         elseif w =~ '\v^Extra\s+'
             call s:Echo(w)
-            return
+            return s:GoToError(w)
         endif
     endfor
     call s:Echo("jacinto ==> Valid JSON!", 1)
@@ -49,8 +51,24 @@ function! s:Validate()
 endfunction
 
 
+function! s:GoToError(error_line)
+    let split_line    = matchlist(a:error_line, '\v(line\s+)(\d+)')
+    let split_column  = matchlist(a:error_line, '\v(column\s+)(\d+)')
+    let line_number   = split_line[2]
+    let column_number = split_column[2]
+    execute line_number
+    execute "normal " . column_number . "|"
+    let g:jacinto_has_errors = 1
+endfunction!
+
+
 function! s:Format()
+    let orig_line = line('.')
+    let orig_col  = col('.')
     let out = s:Validate()
+    if g:jacinto_has_errors
+        return
+    endif
     " FIXME wat
     execute 1
     execute "normal VG"
@@ -59,12 +77,20 @@ function! s:Format()
     execute "normal Gdd"
     execute "normal ggD"
     execute "normal 0i{"
+    execute orig_line
+    execute "normal " . orig_col . "|"
     call s:Echo("jacinto ==> Formatted valid JSON", 1)
 endfunction
 
 
+function! s:Syntax()
+    " A hack really, just set the filetype to JS
+    set filetype=javascript
+endfunction
+
+
 function! s:Completion(ArgLead, CmdLine, CursorPos)
-    let actions = "validate\nformat\n"
+    let actions = "validate\nformat\nsyntax\n"
     let _version = "version\n"
     return actions . _version
 endfunction
@@ -80,6 +106,8 @@ function! s:Proxy(action)
         call s:Validate()
     elseif (a:action == "format")
         call s:Format()
+    elseif (a:action == "syntax")
+        call s:Syntax()
     elseif (a:action == "version")
         call s:Version()
     else
