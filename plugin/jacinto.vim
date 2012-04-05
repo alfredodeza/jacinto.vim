@@ -57,7 +57,6 @@ function! FormatJson() range
 endfunction
 
 function! s:Validate()
-    call s:Echo("Not implemented")
     let _file = expand('%:p')
     let cmd = "python -m json.tool " . _file
     let out = system(cmd)
@@ -77,12 +76,12 @@ function! s:Validate()
             return
         endif
     endfor
+    call s:Echo("jacinto ==> Valid JSON!", 1)
     return out
 endfunction
 
 
 function! s:Format()
-    call s:Echo("Not implemented")
     let out = s:Validate()
     " FIXME wat
     execute 1
@@ -92,13 +91,14 @@ function! s:Format()
     execute "normal Gdd"
     execute "normal ggD"
     execute "normal 0i{"
+    call s:Echo("jacinto ==> Formatted valid JSON", 1)
 endfunction
 
 
 function! s:Completion(ArgLead, CmdLine, CursorPos)
     let actions = "validate\nformat\n"
-    let version = "version\n"
-    return actions . version
+    let _version = "version\n"
+    return actions . _version
 endfunction
 
 
