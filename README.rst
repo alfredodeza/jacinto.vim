@@ -60,6 +60,13 @@ More of a hack really, we just set the filetype of the document to be
 you have any special behavior for Javascript you should be aware of this when
 triggering the highlighting (for example, indentation and tab spaces).
 
+The plugin also includes a callabale so you can trigger this automatically
+every time you read a JSON file. If you would want this functionality you would
+need to add a line similar to this one::
+
+    autocmd BufNewFile,BufRead *.json call jacinto#syntax()
+
+
 Python
 ------
 Probably there is no need to know about Python as the validating engine but
