@@ -85,9 +85,16 @@ function! s:Format()
 endfunction
 
 
+function! jacinto#syntax()
+    " An entry point to set it as an autocomd in your .vimrc
+    call s:Syntax()
+endfunction
+
+
 function! s:Syntax()
     " A hack really, just set the filetype to JS
     set filetype=javascript
+    setlocal tabstop=4 expandtab shiftwidth=4 softtabstop=4
 endfunction
 
 
