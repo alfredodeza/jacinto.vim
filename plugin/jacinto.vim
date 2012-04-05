@@ -24,38 +24,6 @@ function! s:Echo(msg, ...)
 endfun
 
 
-function! FormatJson() range
-    let _file = expand('%:p')
-    let beginning = line("'<")
-    let ending = line("'>")
-    let lines = join(getline(beginning, ending), '\n')
-    let cmd = "python -m json.tool " . _file
-    let out = system(cmd)
-
-    for w in split(out, '\n')
-        if w =~ '\v^No\s+JSON\s+object'
-            call s:Echo("Formatter could not find any JSON object")
-            return
-        elseif w =~ '\v^Expecting\s+'
-            call s:Echo(w)
-            return
-        elseif w =~ '\v^Invalid\s+'
-            call s:Echo(w)
-            return
-        elseif w =~ '\v^Extra\s+'
-            call s:Echo(w)
-            return
-        endif
-    endfor
-    execute 1
-    execute "normal VG"
-    execute "normal dd"
-    execute "normal 0i " . out
-    execute "normal Gdd"
-    execute "normal ggD"
-    execute "normal 0i{"
-endfunction
-
 function! s:Validate()
     let _file = expand('%:p')
     let cmd = "python -m json.tool " . _file
