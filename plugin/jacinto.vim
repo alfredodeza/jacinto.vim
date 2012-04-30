@@ -66,9 +66,15 @@ function! s:Format()
     let orig_line = line('.')
     let orig_col  = col('.')
     let out = s:Validate()
+    call s:Validate()
     if g:jacinto_has_errors
         return
     endif
+    let _file = expand('%:p')
+    let python_command = "import json; print json.dumps(json.loads(' '.join(open('" . _file . "'))) ,sort_keys=True, indent=2)"
+    let cmd = 'python -c "' . python_command . '"'
+    let out = system(cmd)
+
     set paste
     " FIXME wat
     execute 1
@@ -95,7 +101,7 @@ endfunction
 function! s:Syntax()
     " A hack really, just set the filetype to JS
     set filetype=javascript
-    setlocal tabstop=4 expandtab shiftwidth=4 softtabstop=4
+    setlocal tabstop=2 expandtab shiftwidth=2 softtabstop=2
 endfunction
 
 
