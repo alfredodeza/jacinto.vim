@@ -18,7 +18,8 @@ function! s:Echo(msg, ...)
     if (a:0 == 1)
         echo a:msg
     else
-        echohl WarningMsg | echo a:msg | echohl None
+        "echohl WarningMsg | echo a:msg | echohl None
+        echoerr a:msg
     endif
 
     let &ruler=x | let &showcmd=y
@@ -33,8 +34,8 @@ function! s:Validate()
 
     for w in split(out, '\n')
         if w =~ '\v^No\s+JSON\s+object'
-            call s:Echo("Formatter could not find any JSON object")
-            return s:GoToError(w)
+            echoerr "Formatter could not find any JSON object"
+            "call s:Echo("Formatter could not find any JSON object")
         elseif w =~ '\v^Expecting\s+'
             call s:Echo(w)
             return s:GoToError(w)
