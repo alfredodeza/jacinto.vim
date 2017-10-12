@@ -72,7 +72,7 @@ function! s:Format()
         return
     endif
     let _file = expand('%:p')
-    let python_command = "import json; print json.dumps(json.loads(' '.join(open('" . _file . "'))) ,sort_keys=True, indent=2)"
+    let python_command = "import json; print(json.dumps(json.loads(' '.join(open('" . _file . "'))) ,sort_keys=True, indent=2))"
     let cmd = 'python -c "' . python_command . '"'
     let out = system(cmd)
 
